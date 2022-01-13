@@ -35,34 +35,26 @@ def getCredentials():
     server_two = os.getenv('SERVER_2')
     port = os.getenv('SSH_PORT')
 
-    return user, pw, server_one, server_two, port
+    if not user and not pw:
+        print("Error retrieving credentials ~ gracefully terminating ")
+        exit
 
+    # TEST SERVER STATUS
+    response1 = os.system("ping -c 1 " + server_one)
+    response2 = os.system("ping -c 1 " + server_two)
+
+    # TEST TO SEE IF REMOTE SERVERS ARE UP
+    if not response1 == 0:
+        print (server_one, 'is not up!')
+        exit 
+    if not response2 == 0:
+        print (server_two, 'is up!')
+        exit 
+
+    return user, pw, server_one, server_two, port
 
 user, pw, server_one, server_two, port = getCredentials()
 
-if not user and not pw:
-    print("Error retrieving credentials ~ gracefully terminating ")
-    exit
-
-response1 = os.system("ping -c 1 " + server_one)
-response2 = os.system("ping -c 1 " + server_two)
-
-# TEST TO SEE IF REMOTE SERVERS ARE UP
-if response1 == 0:
-      print (server_one, 'is up!')
-if response2 == 0:
-      print (server_two, 'is up!')
-
-# CREDENTIALS
-
-print(user)
-print(pw)
-
-username = "abefong54"
-password = "3vtwyk3m!"
-source_host = server_one
-dest_host = server_two
-port = 22
 
 # CONNECT TO SERVER ONE
 ssh = paramiko.SSHClient()
