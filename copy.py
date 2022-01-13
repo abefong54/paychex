@@ -4,8 +4,13 @@ import re
 import os
 import subprocess
 import paramiko
+from dotenv import load_dotenv
+from pathlib import Path
+
+
 from scp import SCPClient
 import glob
+
 
 
 # requred for this lab
@@ -15,39 +20,30 @@ import glob
 # need to install ssh on virtual machines 'sudo apt install openssh-server'
 # need to open ssh on virtual machines  'sudo ufw allow ssh'
 
+# need to install dotenv and pathlib to read from env file
 # need to install paramiko using pip3 (used to SSH into servers)
 # need to install scp using pip3 (used to copy files) https://pypi.org/project/scp/
 
-def getCredentials(filename):
-    with open(filename) as file:
-        contents = file.readlines()
-    
-    username = ""
-    password = ""
+def getCredentials():
 
-    for f in contents:
-        if "username" in f:
-            username = re.search(r'username: ([\s\S]*)', f).group(1)
-        if "password" in f:
-            password = re.search(r'password: ([\s\S]*)', f).group(1)
+    dotenv_path = Path('./config.env')
+    load_dotenv(dotenv_path=dotenv_path)
 
-    return username, password
+    user = os.getenv('USERNAME')
+    pw = os.getenv('PASSWORD')
+    server_one = os.getenv('SERVER_1')
+    server_two = os.getenv('SERVER_2')
+    port = os.getenv('SSH_PORT')
 
-print("Getting user credentials from file ~ ")
-user, pw = getCredentials('./creds.txt')
+    return user, pw, server_one, server_two, port
 
 
-if user and pw:
-    print("Success !")
-    print(user)
-    print(pw)
-else:
+user, pw, server_one, server_two, port = getCredentials()
+
+if not user and not pw:
     print("Error retrieving credentials ~ gracefully terminating ")
     exit
 
-
-server_one = "192.168.183.131"
-server_two = "192.168.183.132"
 response1 = os.system("ping -c 1 " + server_one)
 response2 = os.system("ping -c 1 " + server_two)
 
