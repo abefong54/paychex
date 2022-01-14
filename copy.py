@@ -1,16 +1,4 @@
 #!/usr/bin/env python3
-
-# requred for this lab
-# - VM WARE
-# - UBUNTU ISO
-
-# need to install ssh on virtual machines 'sudo apt install openssh-server'
-# need to open ssh on virtual machines  'sudo ufw allow ssh'
-
-# need to install dotenv and pathlib to read from env file
-# need to install paramiko using pip3 (used to SSH into servers)
-# need to install scp using pip3 (used to copy files) https://pypi.org/project/scp/
-
 import re
 import os
 import subprocess
@@ -22,6 +10,8 @@ import glob
 
 
 def getCredentials():
+    # function used to read in values from config.env
+    # returns username, password, two servier IP's and a port number
 
     dotenv_path = Path('./config.env')
     load_dotenv(dotenv_path=dotenv_path)
@@ -51,6 +41,9 @@ def getCredentials():
 
 
 def sshConnectCopy(source_host,port,username,password):
+    # function used to ssh into a source server
+    # and copy files from ./files directory
+
     # set up ssh client
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -68,6 +61,9 @@ def sshConnectCopy(source_host,port,username,password):
 
 
 def sshConnectTransfer(dest_host,port,username,password):
+    # function used to ssh into a destination server 
+    # and copy files into ./files directory
+
     # SSH INTO DESTINATION
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -84,6 +80,8 @@ def sshConnectTransfer(dest_host,port,username,password):
 
 
 if __name__ == "__main__":
+    # main function and entry point for our program
+
     # GRAB CREDENTIALS
     user, pw, source_host, destination_host, port = getCredentials()
 
@@ -92,7 +90,7 @@ if __name__ == "__main__":
 
     #  files from local
     files_to_copy = [f for f in glob.glob("move*.txt")]
-    print("FILES TO COPY:", files_to_copy)
+    print("\n\nFILES TO COPY:", files_to_copy)
 
     # TRANSFER FILES TO REMOTE SERVER B
     sshConnectTransfer(destination_host, port, user, pw)

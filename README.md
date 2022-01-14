@@ -1,4 +1,4 @@
-# paychex coding challen
+# paychex coding challenge
 A python script that automates copying files from remote Server A and transfers them to remote Server B
 Information used to login to the servers is pulled from a config.env file which should be created locally.
 For demo purposes, I set up to Ubuntu virtual machines locally using VM ware and installed ssh tools on both.
